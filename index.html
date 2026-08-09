@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRAP AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="app">
+
+        <!-- Sidebar -->
+        <aside id="sidebar">
+
+            <div class="sidebar-header">
+                <div class="logo">T</div>
+                <span>TRAP AI</span>
+            </div>
+
+            <button id="newChatBtn" class="new-chat">
+                <span>＋</span>
+                New chat
+            </button>
+
+            <div class="chat-history">
+                <p>Recent chats</p>
+
+                <button class="history-item">
+                    💬 Welcome to TRAP AI
+                </button>
+            </div>
+
+            <div class="sidebar-bottom">
+                <button>⚙️ Settings</button>
+
+                <div class="profile">
+                    <div class="profile-picture">T</div>
+
+                    <div>
+                        <strong>TRAP GAD</strong>
+                        <small>TRAP AI</small>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+
+        <!-- Main Chat -->
+        <main>
+
+            <!-- Top navigation -->
+            <header>
+
+                <button id="menuBtn">
+                    ☰
+                </button>
+
+                <div class="mobile-title">
+                    TRAP AI
+                </div>
+
+                <button id="mobileNewChat">
+                    ＋
+                </button>
+
+            </header>
+
+
+            <!-- Chat -->
+            <section id="chat">
+
+                <!-- Welcome screen -->
+                <div id="welcome">
+
+                    <div class="welcome-logo">
+                        T
+                    </div>
+
+                    <h1>What can I help with?</h1>
+
+                    <p>
+                        Your AI assistant.
+                    </p>
+
+                </div>
+
+
+                <!-- Messages appear here -->
+                <div id="messages"></div>
+
+            </section>
+
+
+            <!-- Message box -->
+            <div class="composer-container">
+
+                <div class="composer">
+
+                    <button id="attachBtn">
+                        ＋
+                    </button>
+
+                    <textarea
+                        id="messageInput"
+                        placeholder="Message TRAP AI..."
+                        rows="1">
+                    </textarea>
+
+                    <button id="voiceBtn">
+                        🎤
+                    </button>
+
+                    <button id="sendBtn">
+                        ↑
+                    </button>
+
+                </div>
+
+                <p>
+                    TRAP AI can make mistakes. Check important information.
+                </p>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
