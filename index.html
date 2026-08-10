@@ -11,52 +11,62 @@
 
 <body>
 
-    <div id="app">
+    <div class="app">
 
-        <!-- Sidebar -->
-        <aside id="sidebar">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
 
-            <div class="sidebar-header">
+            <div class="brand">
                 <div class="logo">T</div>
                 <span>TRAP AI</span>
             </div>
 
-            <button id="newChatBtn" class="new-chat">
+            <button class="new-chat" id="newChat">
                 <span>＋</span>
                 New chat
             </button>
 
-            <div class="chat-history">
-                <p>Recent chats</p>
+            <div class="history">
 
-                <button class="history-item">
-                    💬 Welcome to TRAP AI
-                </button>
+                <div class="history-title">
+                    Recent chats
+                </div>
+
+                <div id="chatHistory"></div>
+
             </div>
 
             <div class="sidebar-bottom">
-                <button>⚙️ Settings</button>
+
+                <button class="sidebar-button">
+                    ⚙️ Settings
+                </button>
 
                 <div class="profile">
-                    <div class="profile-picture">T</div>
+
+                    <div class="avatar">
+                        T
+                    </div>
 
                     <div>
                         <strong>TRAP GAD</strong>
                         <small>TRAP AI</small>
                     </div>
+
                 </div>
+
             </div>
 
         </aside>
 
 
-        <!-- Main Chat -->
-        <main>
+        <!-- MAIN -->
+        <main class="main">
 
-            <!-- Top navigation -->
-            <header>
+            <!-- TOP BAR -->
+            <header class="topbar">
 
-                <button id="menuBtn">
+                <button class="menu-button" id="menuButton">
                     ☰
                 </button>
 
@@ -64,44 +74,49 @@
                     TRAP AI
                 </div>
 
-                <button id="mobileNewChat">
+                <button class="mobile-new-chat" id="mobileNewChat">
                     ＋
                 </button>
 
             </header>
 
 
-            <!-- Chat -->
-            <section id="chat">
+            <!-- CHAT -->
+            <section class="chat-area" id="chatArea">
 
-                <!-- Welcome screen -->
-                <div id="welcome">
+                <!-- WELCOME -->
+                <div class="welcome" id="welcome">
 
                     <div class="welcome-logo">
                         T
                     </div>
 
-                    <h1>What can I help with?</h1>
+                    <h1>
+                        What can I help with?
+                    </h1>
 
                     <p>
-                        Your AI assistant.
+                        Welcome to TRAP AI.
                     </p>
 
                 </div>
 
 
-                <!-- Messages appear here -->
-                <div id="messages"></div>
+                <!-- MESSAGES -->
+                <div class="messages" id="messages"></div>
 
             </section>
 
 
-            <!-- Message box -->
+            <!-- MESSAGE COMPOSER -->
             <div class="composer-container">
 
                 <div class="composer">
 
-                    <button id="attachBtn">
+                    <button
+                        class="composer-button"
+                        id="attachButton"
+                        type="button">
                         ＋
                     </button>
 
@@ -111,19 +126,25 @@
                         rows="1">
                     </textarea>
 
-                    <button id="voiceBtn">
+                    <button
+                        class="composer-button"
+                        id="voiceButton"
+                        type="button">
                         🎤
                     </button>
 
-                    <button id="sendBtn">
+                    <button
+                        class="send-button"
+                        id="sendButton"
+                        type="button">
                         ↑
                     </button>
 
                 </div>
 
-                <p>
+                <div class="disclaimer">
                     TRAP AI can make mistakes. Check important information.
-                </p>
+                </div>
 
             </div>
 
