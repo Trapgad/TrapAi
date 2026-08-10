@@ -10,42 +10,70 @@ const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
 
 
-// ===============================
+// ========================================
 // SEND MESSAGE
-// ===============================
+// ========================================
 
-function sendMessage() {
+async function sendMessage() {
 
     const text = messageInput.value.trim();
 
     if (!text) return;
 
-    // Hide welcome screen
     welcome.style.display = "none";
 
-    // Add user message
     addMessage(text, "user");
 
-    // Clear input
     messageInput.value = "";
-
-    // Reset textarea height
     messageInput.style.height = "auto";
 
-    // Simulate AI response
-    setTimeout(() => {
+    // Show loading message
+    const loading = addMessage("Thinking...", "ai");
 
-        const response = generateResponse(text);
+    try {
 
-        addMessage(response, "ai");
+        const response = await fetch("/api/chat", {
 
-    }, 700);
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                message: text
+            })
+
+        });
+
+        const data = await response.json();
+
+        // Remove loading message
+        loading.remove();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Something went wrong.");
+        }
+
+        addMessage(data.reply, "ai");
+
+    } catch (error) {
+
+        loading.remove();
+
+        addMessage(
+            "Sorry, I couldn't connect to the AI right now. Please check your server.",
+            "ai"
+        );
+
+        console.error("TRAP AI:", error);
+    }
 }
 
 
-// ===============================
+// ========================================
 // ADD MESSAGE
-// ===============================
+// ========================================
 
 function addMessage(text, type) {
 
@@ -72,75 +100,19 @@ function addMessage(text, type) {
                 ${escapeHTML(text)}
             </div>
         `;
-
     }
 
     messages.appendChild(message);
 
     scrollToBottom();
+
+    return message;
 }
 
 
-// ===============================
-// SIMPLE AI TEST BRAIN
-// ===============================
-
-function generateResponse(text) {
-
-    const message = text.toLowerCase();
-
-    if (
-        message.includes("hello") ||
-        message.includes("hi") ||
-        message.includes("hey")
-    ) {
-
-        return "Hey! 👋 I'm TRAP AI. How can I help you today?";
-
-    }
-
-    if (message.includes("who are you")) {
-
-        return "I'm TRAP AI — your AI assistant. 🚀";
-
-    }
-
-    if (message.includes("trap ai")) {
-
-        return "TRAP AI is your own AI assistant. We're currently building version 1.";
-
-    }
-
-    if (message.includes("website")) {
-
-        return "I can help you build websites, debug code, design interfaces and create web applications. 💻";
-
-    }
-
-    if (message.includes("code")) {
-
-        return "Absolutely. Send me the code and tell me what you want to change. 💻";
-
-    }
-
-    return `
-I'm still in development right now. 🤖
-
-You said:
-
-"${text}"
-
-My real AI brain isn't connected yet.
-
-That's our next major step.
-`;
-
-}
-
-
-// ===============================
+// ========================================
 // NEW CHAT
-// ===============================
+// ========================================
 
 function newChat() {
 
@@ -154,24 +126,21 @@ function newChat() {
 }
 
 
-// Desktop new chat
 newChatBtn.addEventListener("click", newChat);
 
-
-// Mobile new chat
 mobileNewChat.addEventListener("click", newChat);
 
 
-// ===============================
+// ========================================
 // SEND BUTTON
-// ===============================
+// ========================================
 
 sendBtn.addEventListener("click", sendMessage);
 
 
-// ===============================
+// ========================================
 // ENTER TO SEND
-// ===============================
+// ========================================
 
 messageInput.addEventListener("keydown", function(event) {
 
@@ -180,31 +149,28 @@ messageInput.addEventListener("keydown", function(event) {
         event.preventDefault();
 
         sendMessage();
-
     }
 
 });
 
 
-// ===============================
-// AUTO RESIZE TEXTAREA
-// ===============================
+// ========================================
+// AUTO RESIZE
+// ========================================
 
 messageInput.addEventListener("input", function() {
 
     this.style.height = "auto";
 
-    this.style.height = Math.min(
-        this.scrollHeight,
-        180
-    ) + "px";
+    this.style.height =
+        Math.min(this.scrollHeight, 180) + "px";
 
 });
 
 
-// ===============================
+// ========================================
 // MOBILE SIDEBAR
-// ===============================
+// ========================================
 
 menuBtn.addEventListener("click", function() {
 
@@ -213,7 +179,7 @@ menuBtn.addEventListener("click", function() {
 });
 
 
-// Close sidebar when clicking a chat
+// Close sidebar when clicking outside
 document.addEventListener("click", function(event) {
 
     if (
@@ -230,9 +196,9 @@ document.addEventListener("click", function(event) {
 });
 
 
-// ===============================
+// ========================================
 // SCROLL
-// ===============================
+// ========================================
 
 function scrollToBottom() {
 
@@ -245,13 +211,12 @@ function scrollToBottom() {
         behavior: "smooth"
 
     });
-
 }
 
 
-// ===============================
+// ========================================
 // SECURITY
-// ===============================
+// ========================================
 
 function escapeHTML(text) {
 
@@ -260,5 +225,4 @@ function escapeHTML(text) {
     div.textContent = text;
 
     return div.innerHTML;
-
 }
