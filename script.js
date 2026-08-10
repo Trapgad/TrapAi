@@ -16,35 +16,65 @@ const chatHistory = document.getElementById("chatHistory");
 // SEND MESSAGE
 // ===============================
 
-function sendMessage() {
+async function sendMessage() {
 
     const text = messageInput.value.trim();
 
     if (!text) return;
 
-    // Hide welcome screen
     welcome.style.display = "none";
 
-    // Add user message
     addMessage(text, "user");
 
-    // Add chat to history
     addHistory(text);
 
-    // Clear input
     messageInput.value = "";
-
     messageInput.style.height = "auto";
 
-    // Temporary AI response
-    setTimeout(() => {
+    const loadingMessage = addMessage(
+        "TRAP AI is thinking...",
+        "ai"
+    );
+
+    try {
+
+        const response = await fetch("/api/chat", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                message: text
+            })
+
+        });
+
+        const data = await response.json();
+
+        loadingMessage.remove();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "Server error"
+            );
+        }
+
+        addMessage(data.reply, "ai");
+
+    } catch (error) {
+
+        console.error(error);
+
+        loadingMessage.remove();
 
         addMessage(
-            "I'm TRAP AI 🤖. My real AI brain will be connected in the next step.",
+            "⚠️ I couldn't connect to TRAP AI's server. Please try again.",
             "ai"
         );
-
-    }, 700);
+    }
 }
 
 
@@ -81,12 +111,13 @@ function addMessage(text, type) {
                 ${escapeHTML(text)}
             </div>
         `;
-
     }
 
     messages.appendChild(message);
 
     scrollToBottom();
+
+    return message;
 }
 
 
@@ -123,79 +154,99 @@ function startNewChat() {
     messageInput.style.height = "auto";
 }
 
+newChat.addEventListener(
+    "click",
+    startNewChat
+);
 
-newChat.addEventListener("click", startNewChat);
-
-mobileNewChat.addEventListener("click", startNewChat);
+mobileNewChat.addEventListener(
+    "click",
+    startNewChat
+);
 
 
 // ===============================
 // SEND BUTTON
 // ===============================
 
-sendButton.addEventListener("click", sendMessage);
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
 
 
 // ===============================
 // ENTER TO SEND
 // ===============================
 
-messageInput.addEventListener("keydown", function(event) {
+messageInput.addEventListener(
+    "keydown",
+    function(event) {
 
-    if (event.key === "Enter" && !event.shiftKey) {
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        sendMessage();
-
+            sendMessage();
+        }
     }
-
-});
+);
 
 
 // ===============================
 // AUTO RESIZE
 // ===============================
 
-messageInput.addEventListener("input", function() {
+messageInput.addEventListener(
+    "input",
+    function() {
 
-    this.style.height = "auto";
+        this.style.height = "auto";
 
-    this.style.height =
-        Math.min(this.scrollHeight, 180) + "px";
-
-});
+        this.style.height =
+            Math.min(
+                this.scrollHeight,
+                180
+            ) + "px";
+    }
+);
 
 
 // ===============================
 // MOBILE SIDEBAR
 // ===============================
 
-menuButton.addEventListener("click", function() {
+menuButton.addEventListener(
+    "click",
+    function() {
 
-    sidebar.classList.toggle("open");
-
-});
+        sidebar.classList.toggle("open");
+    }
+);
 
 
 // ===============================
 // CLOSE SIDEBAR
 // ===============================
 
-document.addEventListener("click", function(event) {
+document.addEventListener(
+    "click",
+    function(event) {
 
-    if (
-        window.innerWidth <= 768 &&
-        sidebar.classList.contains("open") &&
-        !sidebar.contains(event.target) &&
-        event.target !== menuButton
-    ) {
+        if (
+            window.innerWidth <= 768 &&
+            sidebar.classList.contains("open") &&
+            !sidebar.contains(event.target) &&
+            event.target !== menuButton
+        ) {
 
-        sidebar.classList.remove("open");
-
+            sidebar.classList.remove("open");
+        }
     }
-
-});
+);
 
 
 // ===============================
@@ -212,9 +263,7 @@ function scrollToBottom() {
         top: chatArea.scrollHeight,
 
         behavior: "smooth"
-
     });
-
 }
 
 
@@ -224,7 +273,8 @@ function scrollToBottom() {
 
 function escapeHTML(text) {
 
-    const div = document.createElement("div");
+    const div =
+        document.createElement("div");
 
     div.textContent = text;
 
