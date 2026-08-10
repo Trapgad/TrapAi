@@ -1,35 +1,50 @@
 const express = require("express");
+const OpenAI = require("openai");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+const client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
-// Serve our website
+app.use(express.json());
 app.use(express.static("."));
 
-// TRAP AI chat endpoint
 app.post("/api/chat", async (req, res) => {
     try {
         const { message } = req.body;
 
-        if (!message) {
+        if (!message || !message.trim()) {
             return res.status(400).json({
-                error: "Message is required."
+                error: "Please enter a message."
             });
         }
 
-        // Temporary response
-        // Real AI connection comes next.
+        const response = await client.responses.create({
+            model: "gpt-5-mini",
+            input: [
+                {
+                    role: "developer",
+                    content:
+                        "You are TRAP AI, a helpful, intelligent and friendly AI assistant created by TRAP GAD."
+                },
+                {
+                    role: "user",
+                    content: message
+                }
+            ]
+        });
+
         res.json({
-            reply: `TRAP AI received: ${message}`
+            reply: response.output_text
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("TRAP AI ERROR:", error);
 
         res.status(500).json({
-            error: "TRAP AI server error."
+            error: "TRAP AI could not generate a response."
         });
     }
 });
@@ -42,5 +57,5 @@ app.get("/api/status", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`TRAP AI running on port ${PORT}`);
+    console.log(`TRAP AI is running on port ${PORT}`);
 });
