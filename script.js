@@ -1,90 +1,69 @@
 const messageInput = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
+const sendButton = document.getElementById("sendButton");
 const messages = document.getElementById("messages");
 const welcome = document.getElementById("welcome");
 
-const newChatBtn = document.getElementById("newChatBtn");
+const newChat = document.getElementById("newChat");
 const mobileNewChat = document.getElementById("mobileNewChat");
 
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
+const menuButton = document.getElementById("menuButton");
+const sidebar = document.querySelector(".sidebar");
+
+const chatHistory = document.getElementById("chatHistory");
 
 
-// ========================================
+// ===============================
 // SEND MESSAGE
-// ========================================
+// ===============================
 
-async function sendMessage() {
+function sendMessage() {
 
     const text = messageInput.value.trim();
 
     if (!text) return;
 
+    // Hide welcome screen
     welcome.style.display = "none";
 
+    // Add user message
     addMessage(text, "user");
 
+    // Add chat to history
+    addHistory(text);
+
+    // Clear input
     messageInput.value = "";
+
     messageInput.style.height = "auto";
 
-    // Show loading message
-    const loading = addMessage("Thinking...", "ai");
-
-    try {
-
-        const response = await fetch("/api/chat", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                message: text
-            })
-
-        });
-
-        const data = await response.json();
-
-        // Remove loading message
-        loading.remove();
-
-        if (!response.ok) {
-            throw new Error(data.error || "Something went wrong.");
-        }
-
-        addMessage(data.reply, "ai");
-
-    } catch (error) {
-
-        loading.remove();
+    // Temporary AI response
+    setTimeout(() => {
 
         addMessage(
-            "Sorry, I couldn't connect to the AI right now. Please check your server.",
+            "I'm TRAP AI 🤖. My real AI brain will be connected in the next step.",
             "ai"
         );
 
-        console.error("TRAP AI:", error);
-    }
+    }, 700);
 }
 
 
-// ========================================
+// ===============================
 // ADD MESSAGE
-// ========================================
+// ===============================
 
 function addMessage(text, type) {
 
     const message = document.createElement("div");
 
-    message.classList.add("message");
+    message.className = "message";
 
     if (type === "user") {
 
         message.innerHTML = `
-            <div class="message-avatar">T</div>
+            <div class="message-avatar">
+                T
+            </div>
 
             <div class="message-content user-message">
                 ${escapeHTML(text)}
@@ -94,29 +73,48 @@ function addMessage(text, type) {
     } else {
 
         message.innerHTML = `
-            <div class="message-avatar">AI</div>
+            <div class="message-avatar">
+                AI
+            </div>
 
             <div class="message-content ai-message">
                 ${escapeHTML(text)}
             </div>
         `;
+
     }
 
     messages.appendChild(message);
 
     scrollToBottom();
-
-    return message;
 }
 
 
-// ========================================
-// NEW CHAT
-// ========================================
+// ===============================
+// CHAT HISTORY
+// ===============================
 
-function newChat() {
+function addHistory(text) {
+
+    const item = document.createElement("div");
+
+    item.className = "history-item";
+
+    item.textContent = text;
+
+    chatHistory.prepend(item);
+}
+
+
+// ===============================
+// NEW CHAT
+// ===============================
+
+function startNewChat() {
 
     messages.innerHTML = "";
+
+    chatHistory.innerHTML = "";
 
     welcome.style.display = "block";
 
@@ -126,21 +124,21 @@ function newChat() {
 }
 
 
-newChatBtn.addEventListener("click", newChat);
+newChat.addEventListener("click", startNewChat);
 
-mobileNewChat.addEventListener("click", newChat);
+mobileNewChat.addEventListener("click", startNewChat);
 
 
-// ========================================
+// ===============================
 // SEND BUTTON
-// ========================================
+// ===============================
 
-sendBtn.addEventListener("click", sendMessage);
+sendButton.addEventListener("click", sendMessage);
 
 
-// ========================================
+// ===============================
 // ENTER TO SEND
-// ========================================
+// ===============================
 
 messageInput.addEventListener("keydown", function(event) {
 
@@ -149,14 +147,15 @@ messageInput.addEventListener("keydown", function(event) {
         event.preventDefault();
 
         sendMessage();
+
     }
 
 });
 
 
-// ========================================
+// ===============================
 // AUTO RESIZE
-// ========================================
+// ===============================
 
 messageInput.addEventListener("input", function() {
 
@@ -168,25 +167,28 @@ messageInput.addEventListener("input", function() {
 });
 
 
-// ========================================
+// ===============================
 // MOBILE SIDEBAR
-// ========================================
+// ===============================
 
-menuBtn.addEventListener("click", function() {
+menuButton.addEventListener("click", function() {
 
     sidebar.classList.toggle("open");
 
 });
 
 
-// Close sidebar when clicking outside
+// ===============================
+// CLOSE SIDEBAR
+// ===============================
+
 document.addEventListener("click", function(event) {
 
     if (
         window.innerWidth <= 768 &&
         sidebar.classList.contains("open") &&
         !sidebar.contains(event.target) &&
-        event.target !== menuBtn
+        event.target !== menuButton
     ) {
 
         sidebar.classList.remove("open");
@@ -196,27 +198,29 @@ document.addEventListener("click", function(event) {
 });
 
 
-// ========================================
+// ===============================
 // SCROLL
-// ========================================
+// ===============================
 
 function scrollToBottom() {
 
-    const chat = document.getElementById("chat");
+    const chatArea =
+        document.getElementById("chatArea");
 
-    chat.scrollTo({
+    chatArea.scrollTo({
 
-        top: chat.scrollHeight,
+        top: chatArea.scrollHeight,
 
         behavior: "smooth"
 
     });
+
 }
 
 
-// ========================================
+// ===============================
 // SECURITY
-// ========================================
+// ===============================
 
 function escapeHTML(text) {
 
