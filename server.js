@@ -1,8 +1,14 @@
-const express = require("express");
-const OpenAI = require("openai");
+import "dotenv/config";
+import express from "express";
+import OpenAI from "openai";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+if (!process.env.OPENAI_API_KEY) {
+    console.error("❌ OPENAI_API_KEY is missing from .env");
+    process.exit(1);
+}
 
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -57,5 +63,5 @@ app.get("/api/status", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`TRAP AI is running on port ${PORT}`);
+    console.log(`🚀 TRAP AI is running on http://localhost:${PORT}`);
 });
