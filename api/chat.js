@@ -6,28 +6,33 @@ const openai = new OpenAI({
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
   }
 
   try {
     const { message } = req.body;
 
     if (!message) {
-      return res.status(400).json({ error: "Message is required" });
+      return res.status(400).json({
+        error: "Message is required",
+      });
     }
 
     const response = await openai.responses.create({
-      model: "gpt-5.6",
+      model: "gpt-5.6-sol",
       input: message,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       reply: response.output_text,
     });
-  } catch (error) {
-    console.error(error);
 
-    res.status(500).json({
+  } catch (error) {
+    console.error("OpenAI API Error:", error);
+
+    return res.status(500).json({
       error: "TRAP AI could not process your request.",
     });
   }
