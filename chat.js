@@ -1,49 +1,60 @@
-import OpenAI from "openai";
+const messageInput = document.getElementById("messageInput");
+const sendButton = document.getElementById("sendButton");
+const messages = document.getElementById("messages");
+const welcome = document.getElementById("welcome");
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+function addMessage(text, sender) {
+  const message = document.createElement("div");
+  message.className = `message ${sender}`;
+  message.textContent = text;
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
-  }
+  messages.appendChild(message);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+async function sendMessage() {
+  const message = messageInput.value.trim();
+
+  if (!message) return;
+
+  // Show user's message
+  addMessage(message, "user");
+
+  messageInput.value = "";
+  sendButton.disabled = true;
 
   try {
-    const { message } = req.body;
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: message
+      })
+    });
 
-    if (!message || !message.trim()) {
-      return res.status(400).json({
-        error: "Please enter a message."
-      });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Something went wrong");
     }
 
-    const response = await client.responses.create({
-      model: "gpt-5-mini",
-      input: [
-        {
-          role: "developer",
-          content:
-            "You are TRAP AI, a helpful, intelligent and friendly AI assistant created by TRAP GAD."
-        },
-        {
-          role: "user",
-          content: message
-        }
-      ]
-    });
-
-    return res.status(200).json({
-      reply: response.output_text
-    });
+    // Show TRAP AI response
+    addMessage(data.reply, "assistant");
 
   } catch (error) {
-    console.error("TRAP AI ERROR:", error);
-
-    return res.status(500).json({
-      error: "TRAP AI could not generate a response."
-    });
+    console.error(error);
+    addMessage("Sorry, TRAP AI couldn't connect to the server.", "assistant");
   }
+
+  sendButton.disabled = false;
 }
+
+sendButton.addEventListener("click", sendMessage);
+
+messageInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+});
